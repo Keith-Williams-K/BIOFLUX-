@@ -47,12 +47,15 @@ type RequestItem = {
   userId: string;
 };
 
+<<<<<<< HEAD
 const dbHost = process.env.DB_HOST || 'localhost';
 const isLocalHost = dbHost === 'localhost' || dbHost === '127.0.0.1';
 const useSsl = process.env.DB_SSL
   ? process.env.DB_SSL === 'true'
   : !isLocalHost;
 
+=======
+>>>>>>> 06b1224d772ecbb1da57cd96a1bda7a681724ad5
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT) || 3306,
@@ -106,7 +109,12 @@ async function ensureResidentReportsTable() {
       status VARCHAR(50) NOT NULL DEFAULT 'Pending',
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       notes TEXT,
+<<<<<<< HEAD
       CONSTRAINT fk_resident_reports_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+=======
+      CONSTRAINT fk_resident_reports_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      CONSTRAINT fk_resident_reports_sample FOREIGN KEY (sample_id) REFERENCES samples(id) ON DELETE SET NULL
+>>>>>>> 06b1224d772ecbb1da57cd96a1bda7a681724ad5
     )
   `);
 }
