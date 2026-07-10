@@ -47,26 +47,36 @@ type RequestItem = {
   userId: string;
 };
 
-<<<<<<< HEAD
-const dbHost = process.env.DB_HOST || 'localhost';
-const isLocalHost = dbHost === 'localhost' || dbHost === '127.0.0.1';
-const useSsl = process.env.DB_SSL
-  ? process.env.DB_SSL === 'true'
-  : !isLocalHost;
-
-=======
->>>>>>> 06b1224d772ecbb1da57cd96a1bda7a681724ad5
-const dbConfig = {
+const dbName = process.env.DB_NAME || 'bioflux_db';
+const dbConfig: any = {
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'bioflux_db',
+  database: dbName,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  ...(useSsl ? { ssl: { rejectUnauthorized: true } } : {}),
 };
+
+if (process.env.DATABASE_URL) {
+  try {
+    const databaseUrlObject = new URL(process.env.DATABASE_URL);
+    dbConfig.host = databaseUrlObject.hostname;
+    dbConfig.port = Number(databaseUrlObject.port) || 3306;
+    dbConfig.user = decodeURIComponent(databaseUrlObject.username);
+    dbConfig.password = decodeURIComponent(databaseUrlObject.password);
+    dbConfig.database = databaseUrlObject.pathname?.slice(1) || dbName;
+    const sslQuery = databaseUrlObject.searchParams.get('sslmode') || databaseUrlObject.searchParams.get('ssl');
+    if (sslQuery && /require|true|verify_full/i.test(sslQuery)) {
+      dbConfig.ssl = { rejectUnauthorized: true };
+    }
+  } catch (error) {
+    console.error('Invalid DATABASE_URL:', error);
+  }
+} else if (process.env.DB_SSL === 'true') {
+  dbConfig.ssl = { rejectUnauthorized: true };
+}
 
 const pool = createPool(dbConfig);
 
@@ -109,12 +119,8 @@ async function ensureResidentReportsTable() {
       status VARCHAR(50) NOT NULL DEFAULT 'Pending',
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       notes TEXT,
-<<<<<<< HEAD
-      CONSTRAINT fk_resident_reports_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-=======
       CONSTRAINT fk_resident_reports_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
       CONSTRAINT fk_resident_reports_sample FOREIGN KEY (sample_id) REFERENCES samples(id) ON DELETE SET NULL
->>>>>>> 06b1224d772ecbb1da57cd96a1bda7a681724ad5
     )
   `);
 }
