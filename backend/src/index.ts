@@ -190,7 +190,6 @@ async function getUserByEmail(email: string): Promise<User | null> {
 app.use(cors());
 app.use(express.json());
 
-<<<<<<< HEAD
 const frontendPath = path.resolve(__dirname, '../../frontend/dist');
 const frontendIndexPath = path.join(frontendPath, 'index.html');
 const frontendAvailable = fs.existsSync(frontendIndexPath);
@@ -230,9 +229,7 @@ function formatUser(user: any) {
 }
 
 app.get('/api', (req: Request, res: Response) => {
-=======
 app.get('/', (_req: Request, res: Response) => {
->>>>>>> 2b9b25a (Established connection between backend and frontend)
   res.json({
     name: 'BioFlux Backend API',
     version: '1.0.0',
@@ -250,7 +247,6 @@ app.get('/', (_req: Request, res: Response) => {
   });
 });
 
-<<<<<<< HEAD
 app.get('/', (req: Request, res: Response) => {
   if (frontendAvailable) {
     return res.sendFile(frontendIndexPath);
@@ -269,9 +265,7 @@ app.get('*', (req: Request, res: Response) => {
 });
 
 app.get('/api/health', (req: Request, res: Response) => {
-=======
 app.get('/api/health', (_req: Request, res: Response) => {
->>>>>>> 2b9b25a (Established connection between backend and frontend)
   res.json({ status: 'ok', timestamp: new Date() });
 });
 
@@ -556,10 +550,7 @@ async function startServer() {
   }
 }
 
-<<<<<<< HEAD
 app.listen(Number(port), '0.0.0.0', () => {
   console.log(`Backend server is running on http://0.0.0.0:${port}`);
 });
-=======
 startServer();
->>>>>>> 2b9b25a (Established connection between backend and frontend)
