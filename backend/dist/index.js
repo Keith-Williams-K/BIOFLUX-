@@ -66,6 +66,19 @@ async function ensureUsersTable() {
     )
   `);
 }
+async function ensureSamplesTable() {
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS samples (
+      id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+      name VARCHAR(255) NOT NULL,
+      species VARCHAR(255),
+      collected_at DATETIME,
+      volume_ml DECIMAL(10,3) CHECK (volume_ml >= 0),
+      notes TEXT,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
 async function ensureResidentReportsTable() {
     await pool.query(`
     CREATE TABLE IF NOT EXISTS resident_reports (
@@ -408,6 +421,7 @@ app.patch('/api/requests/:id', async (req, res) => {
 async function startServer() {
     try {
         await ensureUsersTable();
+        await ensureSamplesTable();
         await ensureResidentReportsTable();
         await ensureRequestsTable();
         await seedSampleUsers();
